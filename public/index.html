@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard de Monitoreo</title>
+</head>
+<body>
+  <h1>Monitoreo Distribuido - Agentes</h1>
+  <div id="output"></div>
+
+  <script>
+    async function fetchMetrics() {
+      const res = await fetch('/metrics');
+      const data = await res.json();
+
+      document.getElementById('output').innerHTML = data.map(m => `
+        <div style="border:1px solid #ccc; padding:10px; margin:5px;">
+          <strong>Agente:</strong> ${m.agentId}<br>
+          <strong>CPU:</strong> ${m.cpuLoad.toFixed(2)}<br>
+          <strong>RAM Usada:</strong> ${(m.usedMem / 1e6).toFixed(2)} MB<br>
+          <strong>Libre:</strong> ${(m.freeMem / 1e6).toFixed(2)} MB<br>
+          <small>${m.timestamp}</small>
+        </div>
+      `).join('');
+    }
+
+    setInterval(fetchMetrics, 3000);
+  </script>
+</body>
+</html>
